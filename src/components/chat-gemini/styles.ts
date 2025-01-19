@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { IoIosCloseCircle } from "react-icons/io";
 
 export const ChatIcon = styled.div`
   position: fixed;
@@ -39,6 +40,12 @@ export const ChatHeader = styled.div`
   font-weight: bold;
 `;
 
+export const ChatCloseIcon = styled(IoIosCloseCircle)`
+  font-size: 24px;
+  color: #525252;
+  cursor: pointer;
+`;
+
 export const ChatBody = styled.div`
   flex: 1;
   padding: 8px;
@@ -77,7 +84,8 @@ export const Message = styled.div<{ sender: string }>`
   margin: 4px 0;
   background: ${({ sender }) => (sender === "user" ? "#e0f7fa" : "#fce4ec")};
   border-radius: 8px;
-  align-self: ${({ sender }) => (sender === "user" ? "flex-end" : "flex-start")};
+  align-self: ${({ sender }) =>
+    sender === "user" ? "flex-end" : "flex-start"};
   max-width: 80%;
   word-wrap: break-word;
 `;

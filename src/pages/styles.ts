@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import finance from "../assets/finance.jpeg"
+import finance from "../assets/finance.png";
 
 export const Container = styled.div`
   display: flex;
@@ -7,7 +7,7 @@ export const Container = styled.div`
   align-items: center;
   justify-content: center;
   min-height: calc(100vh - 100px);
-  background-color: #faedfa; 
+  background-color: #faedfa;
   padding-bottom: 5rem;
 `;
 
@@ -65,13 +65,16 @@ export const Button = styled.button`
 `;
 
 export const TableContainer = styled.div`
-  padding: 2rem; 
-  padding-bottom: 5rem;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
-  align-items: center; 
-  background-color: #faedfa; 
+  min-height: calc(100vh - 100px);
+  background-color: #faedfa;
+  // padding: 2rem;
+  // padding-bottom: 5rem;
+
+  // background-color: #faedfa;
 `;
 
 export const TotalsContainer = styled.div`
@@ -92,7 +95,8 @@ export const StyledTable = styled.table`
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 
-  th, td {
+  th,
+  td {
     padding: 1rem;
     text-align: left;
     border-bottom: 1px solid #e0e0e0;
@@ -114,7 +118,8 @@ export const StyledTable = styled.table`
   }
 
   @media (max-width: 768px) {
-    th, td {
+    th,
+    td {
       padding: 0.5rem;
     }
   }
@@ -143,7 +148,7 @@ export const CardsContainer = styled.div`
   justify-content: center;
   gap: 1rem;
   margin-bottom: 2rem;
-  flex-wrap: wrap;  /* Permite que os cards se reorganizem para baixo em telas menores */
+  flex-wrap: wrap; /* Permite que os cards se reorganizem para baixo em telas menores */
 
   /* Alinhamento de cards na linha */
   @media (max-width: 768px) {
@@ -157,7 +162,8 @@ interface CardProps {
 }
 
 export const Card = styled.div<CardProps>`
-  background-color: ${(props) => props.bgColor || '#fff'}; /* Usando interpolação corretamente */
+  background-color: ${(props) =>
+    props.bgColor || "#fff"}; /* Usando interpolação corretamente */
   color: #fff;
   padding: 20px;
   border-radius: 8px;

@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from "react";
+import axios from "axios";
 import * as S from "./styles";
+import { auth } from "../services/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import http from "../http";
 
 const CriarDespesas = () => {
+  const [user] = useAuthState(auth); // Hook do Firebase pa
+
   const [form, setForm] = useState({
     descricao: "",
     categoria: "",
@@ -9,39 +15,58 @@ const CriarDespesas = () => {
     tipo: "entrada",
     data: "",
   });
-  
-  const [pdfFile, setPdfFile] = useState<File | null>(null); // Estado para armazenar o arquivo PDF
-  const [isSubmitted, setIsSubmitted] = useState(false); // Estado para controlar a mensagem de sucesso
 
-  const handleChange = (e: { target: { name: any; value: any; }; }) => {
+  const [isSubmitted, setIsSubmitted] = useState(false); // Estado para controlar a mensagem de sucesso
+  const [isLoading, setIsLoading] = useState(false); // Estado para controlar o carregamento durante o envio
+
+  const handleChange = (e: { target: { name: any; value: any } }) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: { preventDefault: () => void; }) => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    console.log("Dados enviados:", form);
-    if (pdfFile) {
-      console.log("Arquivo PDF selecionado:", pdfFile.name);
-    }
 
-    // Mostrar a mensagem de sucesso
-    setIsSubmitted(true);
+    // Montando o objeto com os dados do formulário
+    const despesaData = {
+      descricao: form.descricao,
+      categoria: form.categoria,
+      valor: form.valor,
+      tipo: form.tipo,
+      data: form.data,
+      userId: user?.uid,
+    };
 
-    // Esconder a mensagem após 3 segundos
-    setTimeout(() => {
-      setIsSubmitted(false);
-    }, 3000);
+    setIsLoading(true); // Ativa o estado de carregamento
 
-    // Aqui futuramente será implementada a integração com o backend
-  };
+    try {
+      const response = await http.post("despesas", despesaData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-  const handlePdfUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file && file.type === 'application/pdf') {
-      setPdfFile(file); // Armazenar o arquivo PDF no estado
-      alert(`PDF selecionado: ${file.name}`);
-    } else {
-      alert('Por favor, selecione um arquivo PDF.');
+      console.log("Resposta da API:", response.data);
+
+      // Exibe a mensagem de sucesso
+      setIsSubmitted(true);
+
+      // Limpa os dados do formulário após o envio
+      setForm({
+        descricao: "",
+        categoria: "",
+        valor: "",
+        tipo: "entrada",
+        data: "",
+      });
+
+      // Esconde a mensagem de sucesso após 3 segundos
+      setTimeout(() => {
+        setIsSubmitted(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Erro ao enviar despesa:", error);
+    } finally {
+      setIsLoading(false); // Desativa o estado de carregamento
     }
   };
 
@@ -55,12 +80,14 @@ const CriarDespesas = () => {
           value={form.descricao}
           onChange={handleChange}
         />
+
         <S.Input
           name="categoria"
           placeholder="Categoria"
           value={form.categoria}
           onChange={handleChange}
         />
+
         <S.Input
           name="valor"
           placeholder="Valor"
@@ -68,10 +95,12 @@ const CriarDespesas = () => {
           value={form.valor}
           onChange={handleChange}
         />
+
         <S.Select name="tipo" value={form.tipo} onChange={handleChange}>
           <option value="entrada">Entrada</option>
           <option value="saída">Saída</option>
         </S.Select>
+
         <S.Input
           name="data"
           placeholder="Data"
@@ -79,29 +108,16 @@ const CriarDespesas = () => {
           value={form.data}
           onChange={handleChange}
         />
-        
-        {/* Botão para upload de PDF */}
-        <S.UploadContainer>
-          <S.UploadButton>
-            <input
-              type="file"
-              accept="application/pdf"
-              onChange={handlePdfUpload}
-              style={{ display: 'none' }} // Ocultar o input file
-            />
-            <label htmlFor="file-upload" style={{ cursor: 'pointer' }}>
-              Upload de Nota Fiscal.
-            </label>
-          </S.UploadButton>
-        </S.UploadContainer>
-
-        {/* Exibindo o nome do PDF selecionado */}
-        {pdfFile && <p>PDF Selecionado: {pdfFile.name}</p>}
 
         {/* Exibir a mensagem de sucesso */}
-        {isSubmitted && <S.SuccessMessage>Nota enviada com sucesso!</S.SuccessMessage>}
+        {isSubmitted && (
+          <S.SuccessMessage>Despesa enviada com sucesso!</S.SuccessMessage>
+        )}
 
-        <S.Button type="submit">Enviar</S.Button>
+        {/* Botão para envio */}
+        <S.Button type="submit" disabled={isLoading}>
+          {isLoading ? "Enviando..." : "Enviar"}
+        </S.Button>
       </S.Form>
     </S.Container>
   );
