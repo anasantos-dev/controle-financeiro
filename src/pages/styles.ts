@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import finance from "../assets/finance.png";
+import finance from "../assets/finance.jpeg";
 
 export const Container = styled.div`
   display: flex;
