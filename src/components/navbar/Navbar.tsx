@@ -35,7 +35,7 @@ const Navbar = () => {
   return (
     <S.StyledNavbar>
       {user && <NavLink to="/">Home</NavLink>}
-      {user && <NavLink to="/criar-despesas">Criar Despesas</NavLink>}
+      {user && <NavLink to="/entradas/saídas">Criar Despesas</NavLink>}
       {user && <NavLink to="/dashboard">Dashboard</NavLink>}
 
       {user ? (
