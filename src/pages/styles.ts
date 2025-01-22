@@ -158,12 +158,15 @@ export const CardsContainer = styled.div`
 `;
 
 interface CardProps {
-  bgColor: string;
+  $bgColor: string;
+}
+
+interface CardProps {
+  $bgColor: string; // Aqui deve ser $bgColor
 }
 
 export const Card = styled.div<CardProps>`
-  background-color: ${(props) =>
-    props.bgColor || "#fff"}; /* Usando interpolação corretamente */
+  background-color: ${(props) => props.$bgColor || "#fff"};
   color: #fff;
   padding: 20px;
   border-radius: 8px;
@@ -188,6 +191,8 @@ export const Card = styled.div<CardProps>`
     height: auto;
   }
 `;
+
+
 
 export const UploadContainer = styled.div`
   margin-top: 20px;
@@ -217,4 +222,7 @@ export const SuccessMessage = styled.p`
   font-size: 18px;
   font-weight: bold;
   text-align: center;
+`;
+export const List = styled.ul`
+  /* Estilos para a lista */
 `;

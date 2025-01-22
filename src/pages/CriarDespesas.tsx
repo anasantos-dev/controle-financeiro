@@ -1,12 +1,28 @@
 import { useState } from "react";
-import axios from "axios";
 import * as S from "./styles";
 import { auth } from "../services/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import http from "../http";
+import styled from "styled-components";
+
+// Estilizando o botão amarelo
+const AlertButton = styled.button`
+  background-color: #ffcc00;
+  color: #000;
+  font-size: 16px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+
+  &:hover {
+    background-color: #ffdd44;
+  }
+`;
 
 const CriarDespesas = () => {
-  const [user] = useAuthState(auth); // Hook do Firebase pa
+  const [user] = useAuthState(auth);
 
   const [form, setForm] = useState({
     descricao: "",
@@ -16,27 +32,28 @@ const CriarDespesas = () => {
     data: "",
   });
 
-  const [isSubmitted, setIsSubmitted] = useState(false); // Estado para controlar a mensagem de sucesso
-  const [isLoading, setIsLoading] = useState(false); // Estado para controlar o carregamento durante o envio
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleChange = (e: { target: { name: any; value: any } }) => {
+  const handleChange = (e: { target: { name: string; value: string } }) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    // Montando o objeto com os dados do formulário
+    const valorNumerico = parseFloat(form.valor);
+
     const despesaData = {
       descricao: form.descricao,
       categoria: form.categoria,
-      valor: form.valor,
+      valor: valorNumerico,
       tipo: form.tipo,
       data: form.data,
       userId: user?.uid,
     };
 
-    setIsLoading(true); // Ativa o estado de carregamento
+    setIsLoading(true);
 
     try {
       const response = await http.post("despesas", despesaData, {
@@ -46,11 +63,8 @@ const CriarDespesas = () => {
       });
 
       console.log("Resposta da API:", response.data);
-
-      // Exibe a mensagem de sucesso
       setIsSubmitted(true);
 
-      // Limpa os dados do formulário após o envio
       setForm({
         descricao: "",
         categoria: "",
@@ -59,15 +73,18 @@ const CriarDespesas = () => {
         data: "",
       });
 
-      // Esconde a mensagem de sucesso após 3 segundos
       setTimeout(() => {
         setIsSubmitted(false);
       }, 3000);
     } catch (error) {
       console.error("Erro ao enviar despesa:", error);
     } finally {
-      setIsLoading(false); // Desativa o estado de carregamento
+      setIsLoading(false);
     }
+  };
+
+  const handleAlert = () => {
+    alert("Atenção: Você está adicionando uma saída acima de R$ 700,00!");
   };
 
   return (
@@ -80,14 +97,12 @@ const CriarDespesas = () => {
           value={form.descricao}
           onChange={handleChange}
         />
-
         <S.Input
           name="categoria"
           placeholder="Categoria"
           value={form.categoria}
           onChange={handleChange}
         />
-
         <S.Input
           name="valor"
           placeholder="Valor"
@@ -95,12 +110,10 @@ const CriarDespesas = () => {
           value={form.valor}
           onChange={handleChange}
         />
-
         <S.Select name="tipo" value={form.tipo} onChange={handleChange}>
           <option value="entrada">Entrada</option>
           <option value="saída">Saída</option>
         </S.Select>
-
         <S.Input
           name="data"
           placeholder="Data"
@@ -108,13 +121,17 @@ const CriarDespesas = () => {
           value={form.data}
           onChange={handleChange}
         />
-
-        {/* Exibir a mensagem de sucesso */}
         {isSubmitted && (
           <S.SuccessMessage>Despesa enviada com sucesso!</S.SuccessMessage>
         )}
 
-        {/* Botão para envio */}
+        {/* Exibe o botão amarelo se for uma saída maior que R$ 700 */}
+        {form.tipo === "saída" && parseFloat(form.valor) > 700 && (
+          <AlertButton type="button" onClick={handleAlert}>
+            Alerta: Saída Acima de R$ 700,00
+          </AlertButton>
+        )}
+
         <S.Button type="submit" disabled={isLoading}>
           {isLoading ? "Enviando..." : "Enviar"}
         </S.Button>
