@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const http = axios.create({
-  baseURL: "https://back-aprofunda-chat-despesa.onrender.com",
+  baseURL: "https://projeto-aprofunda-template-1.onrender.com",
   headers: {
     "Content-Type": "application/json",
   },
