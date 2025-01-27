@@ -4,7 +4,7 @@ const Home = () => {
   return (
     <S.Container>
       <S.ImageContainer />
-      <S.Title>Domine suas finanças com a Gemini.</S.Title>
+      <S.Title>Domine suas finanças com a Finova.</S.Title>
       <S.Subtitle>
         Uma visão clara de suas finanças para tomar decisões financeiras mais
         inteligentes e alcançar seus objetivos financeiros mais rapidamente.

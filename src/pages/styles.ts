@@ -27,8 +27,9 @@ export const ImageContainer = styled.div`
   background-image: url(${finance});
   background-size: cover;
   margin-bottom: 50px;
-  width: 200px;
-  height: 200px;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
 `;
 
 export const Form = styled.form`
